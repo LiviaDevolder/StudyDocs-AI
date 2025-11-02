@@ -55,7 +55,6 @@ export const PROJECTS_QUERY = gql`
     projects {
       id
       name
-      description
       userId
       createdAt
       updatedAt
@@ -68,7 +67,6 @@ export const PROJECT_QUERY = gql`
     project(id: $id) {
       id
       name
-      description
       userId
       createdAt
       updatedAt

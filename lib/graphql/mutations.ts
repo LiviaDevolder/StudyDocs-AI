@@ -55,7 +55,6 @@ export const CREATE_PROJECT_MUTATION = gql`
     createProject(createProjectInput: $createProjectInput) {
       id
       name
-      description
       userId
       createdAt
       updatedAt
@@ -68,7 +67,6 @@ export const UPDATE_PROJECT_MUTATION = gql`
     updateProject(id: $id, updateProjectInput: $updateProjectInput) {
       id
       name
-      description
       updatedAt
     }
   }
