@@ -1,11 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { useAuth } from '@/contexts/auth-context';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function ProjectsScreen() {
-  const { user } = useAuth();
+export default function CreateProjectScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -16,20 +14,20 @@ export default function ProjectsScreen() {
     >
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>
-          Meus Projetos
+          Criar Novo Projeto
         </Text>
         <Text style={[styles.subtitle, { color: colors.text }]}>
-          Olá, {user?.name || 'Usuário'}! 👋
+          Configure seu projeto de estudos
         </Text>
       </View>
 
-      <View style={styles.emptyState}>
-        <Text style={[styles.emptyIcon, { color: colors.text }]}>📁</Text>
-        <Text style={[styles.emptyText, { color: colors.text }]}>
-          Nenhum projeto ainda
+      <View style={styles.placeholder}>
+        <Text style={[styles.placeholderIcon, { color: colors.text }]}>📝</Text>
+        <Text style={[styles.placeholderText, { color: colors.text }]}>
+          Formulário de criação em breve
         </Text>
-        <Text style={[styles.emptySubtext, { color: colors.tabIconDefault }]}>
-          Em breve você poderá criar e gerenciar seus projetos aqui
+        <Text style={[styles.placeholderSubtext, { color: colors.tabIconDefault }]}>
+          Aqui você poderá criar novos projetos, adicionar documentos e configurar seu estudo com IA
         </Text>
       </View>
     </ScrollView>
@@ -56,23 +54,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     opacity: 0.7,
   },
-  emptyState: {
+  placeholder: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
   },
-  emptyIcon: {
+  placeholderIcon: {
     fontSize: 64,
     marginBottom: 16,
   },
-  emptyText: {
+  placeholderText: {
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 8,
   },
-  emptySubtext: {
+  placeholderSubtext: {
     fontSize: 14,
     textAlign: 'center',
     paddingHorizontal: 40,
+    lineHeight: 20,
   },
 });
