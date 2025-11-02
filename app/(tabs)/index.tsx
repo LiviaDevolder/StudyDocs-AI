@@ -13,8 +13,8 @@ import {
   Text,
   VStack,
 } from 'native-base';
-import React from 'react';
-import { FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, RefreshControl } from 'react-native';
 
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/auth-context';
@@ -27,6 +27,8 @@ export default function ProjectsScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+  
   const { data, loading, error, refetch } = useQuery<{ projects: Project[] }>(
     PROJECTS_QUERY,
     {
@@ -39,6 +41,15 @@ export default function ProjectsScreen() {
       refetch();
     }, [refetch])
   );
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const projects = data?.projects || [];
 
@@ -168,6 +179,14 @@ export default function ProjectsScreen() {
             paddingHorizontal: 24,
             paddingBottom: 24,
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.tint}
+              colors={[colors.tint]}
+            />
+          }
         />
       )}
     </Box>
