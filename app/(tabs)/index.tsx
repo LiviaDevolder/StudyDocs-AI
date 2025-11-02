@@ -1,78 +1,175 @@
+import { useQuery } from '@apollo/client';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import {
+  Box,
+  Center,
+  HStack,
+  Heading,
+  Icon,
+  Pressable,
+  Spinner,
+  Text,
+  VStack,
+} from 'native-base';
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { useAuth } from '@/contexts/auth-context';
+import { FlatList } from 'react-native';
+
 import { Colors } from '@/constants/theme';
+import { useAuth } from '@/contexts/auth-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { PROJECTS_QUERY } from '@/lib/graphql/queries';
+import { Project } from '@/types/api';
 
 export default function ProjectsScreen() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const router = useRouter();
+  const { data, loading, error, refetch } = useQuery<{ projects: Project[] }>(
+    PROJECTS_QUERY,
+    {
+      fetchPolicy: 'network-only',
+    }
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  const projects = data?.projects || [];
+
+  if (loading) {
+    return (
+      <Center flex={1} bg={colorScheme === 'dark' ? 'gray.900' : 'white'}>
+        <Spinner size="lg" color={colors.tint} />
+        <Text mt={4} color={colorScheme === 'dark' ? 'gray.400' : 'gray.600'}>
+          Carregando projetos...
+        </Text>
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Center flex={1} bg={colorScheme === 'dark' ? 'gray.900' : 'white'} px={6}>
+        <Icon as={Ionicons} name="alert-circle" size="4xl" color="red.500" mb={4} />
+        <Text color={colorScheme === 'dark' ? 'white' : 'gray.800'} fontSize="lg" fontWeight="bold" mb={2}>
+          Erro ao carregar projetos
+        </Text>
+        <Text color={colorScheme === 'dark' ? 'gray.400' : 'gray.600'} textAlign="center">
+          {error.message}
+        </Text>
+      </Center>
+    );
+  }
+
+  const renderProjectItem = ({ item }: { item: Project }) => (
+    <Pressable
+      onPress={() => router.push(`/project/${item.id}/documents`)}
+      mb={3}
+      _pressed={{ opacity: 0.7 }}
+    >
+      <Box
+        bg={colorScheme === 'dark' ? 'gray.800' : 'white'}
+        borderWidth={1}
+        borderColor={colorScheme === 'dark' ? 'gray.700' : 'gray.200'}
+        borderRadius="lg"
+        p={4}
+        shadow={1}
+      >
+        <HStack alignItems="center" justifyContent="space-between">
+          <HStack alignItems="center" flex={1} space={3}>
+            <Box
+              bg={colors.tint}
+              p={2}
+              borderRadius="md"
+            >
+              <Icon
+                as={Ionicons}
+                name="folder"
+                size="md"
+                color="white"
+              />
+            </Box>
+            <VStack flex={1}>
+              <Text
+                color={colorScheme === 'dark' ? 'white' : 'gray.800'}
+                fontSize="lg"
+                fontWeight="600"
+                numberOfLines={1}
+              >
+                {item.name}
+              </Text>
+              <Text
+                color={colorScheme === 'dark' ? 'gray.400' : 'gray.600'}
+                fontSize="sm"
+              >
+                Criado em {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+              </Text>
+            </VStack>
+          </HStack>
+          <Icon
+            as={Ionicons}
+            name="chevron-forward"
+            size="sm"
+            color={colorScheme === 'dark' ? 'gray.400' : 'gray.600'}
+          />
+        </HStack>
+      </Box>
+    </Pressable>
+  );
 
   return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.content}
-    >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>
+    <Box flex={1} safeArea bg={colorScheme === 'dark' ? 'gray.900' : 'white'}>
+      <VStack space={4} px={6} pt={6} pb={4}>
+        <Heading size="2xl" color={colorScheme === 'dark' ? 'white' : 'gray.800'}>
           Meus Projetos
-        </Text>
-        <Text style={[styles.subtitle, { color: colors.text }]}>
+        </Heading>
+        <Text color={colorScheme === 'dark' ? 'gray.400' : 'gray.600'} fontSize="lg">
           Olá, {user?.name || 'Usuário'}! 👋
         </Text>
-      </View>
+      </VStack>
 
-      <View style={styles.emptyState}>
-        <Text style={[styles.emptyIcon, { color: colors.text }]}>📁</Text>
-        <Text style={[styles.emptyText, { color: colors.text }]}>
-          Nenhum projeto ainda
-        </Text>
-        <Text style={[styles.emptySubtext, { color: colors.tabIconDefault }]}>
-          Em breve você poderá criar e gerenciar seus projetos aqui
-        </Text>
-      </View>
-    </ScrollView>
+      {projects.length === 0 ? (
+        <Center flex={1} px={8}>
+          <Icon
+            as={Ionicons}
+            name="folder-open-outline"
+            size="6xl"
+            color={colorScheme === 'dark' ? 'gray.700' : 'gray.300'}
+            mb={4}
+          />
+          <Text
+            color={colorScheme === 'dark' ? 'gray.400' : 'gray.600'}
+            fontSize="xl"
+            fontWeight="600"
+            mb={2}
+          >
+            Nenhum projeto ainda
+          </Text>
+          <Text
+            color={colorScheme === 'dark' ? 'gray.500' : 'gray.500'}
+            fontSize="md"
+            textAlign="center"
+          >
+            Clique no botão "+" abaixo para criar seu primeiro projeto
+          </Text>
+        </Center>
+      ) : (
+        <FlatList
+          data={projects}
+          renderItem={renderProjectItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingBottom: 24,
+          }}
+        />
+      )}
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 60,
-  },
-  header: {
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    opacity: 0.7,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyText: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    textAlign: 'center',
-    paddingHorizontal: 40,
-  },
-});
