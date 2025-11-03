@@ -82,6 +82,20 @@ export const REMOVE_PROJECT_MUTATION = gql`
 `;
 
 // Document Mutations
+export const UPLOAD_DOCUMENT_MUTATION = gql`
+  mutation UploadDocument($projectId: String!, $file: Upload!) {
+    uploadDocument(projectId: $projectId, file: $file) {
+      id
+      name
+      type
+      status
+      fileSize
+      gcsPath
+      uploadedAt
+    }
+  }
+`;
+
 export const CREATE_DOCUMENT_MUTATION = gql`
   mutation CreateDocument($createDocumentInput: CreateDocumentInput!) {
     createDocument(createDocumentInput: $createDocumentInput) {
@@ -89,6 +103,7 @@ export const CREATE_DOCUMENT_MUTATION = gql`
       name
       projectId
       uploadedAt
+      status
     }
   }
 `;

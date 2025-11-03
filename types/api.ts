@@ -50,8 +50,12 @@ export interface UpdateProjectInput {
 export interface Document {
   id: string;
   name: string;
-  projectId: string;
+  projectId?: string;
   uploadedAt: string;
+  status?: string;
+  type?: string;
+  fileSize?: number;
+  gcsPath?: string;
 }
 
 export interface CreateDocumentInput {

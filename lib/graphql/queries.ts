@@ -108,6 +108,7 @@ export const DOCUMENTS_BY_PROJECT_QUERY = gql`
       name
       projectId
       uploadedAt
+      status
     }
   }
 `;
