@@ -50,21 +50,21 @@ export interface UpdateProjectInput {
 export interface Document {
   id: string;
   name: string;
-  path: string;
   projectId: string;
-  createdAt: string;
-  updatedAt: string;
+  uploadedAt: string;
 }
 
 export interface CreateDocumentInput {
   name: string;
-  path: string;
+  gcsPath: string;
+  type: string;
   projectId: string;
 }
 
 export interface UpdateDocumentInput {
   name?: string;
-  path?: string;
+  gcsPath?: string;
+  type?: string;
 }
 
 // Conversation Types

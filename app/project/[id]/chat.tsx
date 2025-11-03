@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react';
-import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useLazyQuery } from '@apollo/client';
+import { Ionicons } from '@expo/vector-icons';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 import {
   Box,
-  VStack,
+  Button,
+  Center,
   HStack,
   Heading,
-  Text,
   Icon,
-  Spinner,
-  Center,
-  Button,
   Pressable,
+  Spinner,
+  Text,
+  VStack,
 } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';

@@ -106,10 +106,8 @@ export const DOCUMENTS_BY_PROJECT_QUERY = gql`
     documentsByProject(projectId: $projectId) {
       id
       name
-      path
       projectId
-      createdAt
-      updatedAt
+      uploadedAt
     }
   }
 `;

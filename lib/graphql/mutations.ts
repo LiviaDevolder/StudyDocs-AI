@@ -87,10 +87,8 @@ export const CREATE_DOCUMENT_MUTATION = gql`
     createDocument(createDocumentInput: $createDocumentInput) {
       id
       name
-      path
       projectId
-      createdAt
-      updatedAt
+      uploadedAt
     }
   }
 `;
@@ -100,8 +98,7 @@ export const UPDATE_DOCUMENT_MUTATION = gql`
     updateDocument(id: $id, updateDocumentInput: $updateDocumentInput) {
       id
       name
-      path
-      updatedAt
+      uploadedAt
     }
   }
 `;
